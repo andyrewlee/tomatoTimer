@@ -12,6 +12,7 @@ class ViewController: NSViewController {
     var timer = NSTimer()
     var timeLeft = 1500
     var timeStopped = false
+    let speechSynthesizer = NSSpeechSynthesizer()
     
 
     @IBOutlet weak var stopButton: NSButton!
@@ -38,21 +39,14 @@ class ViewController: NSViewController {
         if timeStopped {
             sender.title = "Stop"
             timeStopped = false
+            
             timer = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "updateUI", userInfo: nil, repeats: true)
         } else {
-            timer.invalidate()
-            timeStopped = true
             sender.title = "Start"
             timeStopped = true
+            
             timer.invalidate()
         }
-
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
     }
 
     func updateUI() {
@@ -68,7 +62,11 @@ class ViewController: NSViewController {
         let strSeconds = seconds > 9 ? String(seconds): "0" + String(seconds)
         
         timeTextField.stringValue = "\(strMinutes):\(strSeconds)"
-
+        
+        if timeLeft == 0 {
+            timer.invalidate()
+            speechSynthesizer.startSpeakingString("Boom!")
+        }
     }
 }
 
